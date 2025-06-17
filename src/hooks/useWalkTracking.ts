@@ -8,6 +8,16 @@ interface WalkUpdate {
   duration?: string;
 }
 
+const formatDuration = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes
+    .toString()
+    .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
+
 export const useWalkTracking = () => {
   const [currentWalk, setCurrentWalk] = useState<Walk | null>(null);
   const [savedWalks, setSavedWalks] = useState<Walk[]>([]);
@@ -43,15 +53,16 @@ export const useWalkTracking = () => {
   };
 
   const startWalk = () => {
+    const now = new Date();
     const newWalk: Walk = {
       id: Date.now().toString(),
-      date: new Date().toISOString(),
+      date: now.toISOString(),
       duration: '00:00:00',
       distance: 0,
       locations: [],
       coordinates: [],
-      timestamp: '',
-      startTime: '',
+      timestamp: now.getTime().toString(),
+      startTime: now.toISOString(),
       endTime: ''
     };
     setCurrentWalk(newWalk);
@@ -76,8 +87,21 @@ export const useWalkTracking = () => {
     if (!currentWalk) return;
 
     try {
+      // Calculate final duration
+      const startTime = new Date(currentWalk.date).getTime();
+      const endTime = Date.now();
+      const durationInSeconds = Math.floor((endTime - startTime) / 1000);
+      const formattedDuration = formatDuration(durationInSeconds);
+
+      // Create final walk with formatted duration
+      const finalWalk: Walk = {
+        ...currentWalk,
+        duration: formattedDuration,
+        endTime: new Date().toISOString()
+      };
+
       // Save to completed walks
-      const updatedWalks = [currentWalk, ...savedWalks];
+      const updatedWalks = [finalWalk, ...savedWalks];
       await AsyncStorage.setItem('completedWalks', JSON.stringify(updatedWalks));
       setSavedWalks(updatedWalks);
 

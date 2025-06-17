@@ -79,6 +79,17 @@ export const SavedWalksScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon name="arrow-back" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Saved Walks</Text>
+        <View style={styles.headerRight} />
+      </View>
+
       {savedWalks.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Icon name="directions-walk" size={48} color="#ccc" />
@@ -100,6 +111,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  headerRight: {
+    width: 24, // To balance the back button
+  },
+  backButton: {
+    padding: 8,
   },
   list: {
     padding: 16,

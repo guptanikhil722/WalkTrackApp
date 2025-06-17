@@ -36,7 +36,9 @@ export const HomeScreen = () => {
   const isFocused = useIsFocused()
   const [mapReady, setMapReady] = useState(false)
   const [region, setRegion] = useState(INITIAL_REGION);
-  const settingUserLocation = async () => {
+  const settingUserLocation = async (region:any) => {
+    // setRegion(null)
+    //   setCurrentLocation(null)
     try {
       const position = await locationService.getCurrentPosition();
       const region: Region = {
@@ -83,9 +85,11 @@ export const HomeScreen = () => {
   };
     useFocusEffect(
     useCallback(() => {
+      setRegion(null)
+      setCurrentLocation(null)
       let isActive = true;
       locationService.getCurrentPosition()
-        .then(coords => {
+        .then((coords:any) => {
           setCurrentLocation(coords);
           console.log(coords,'inside usefocus')
           if (isActive) moveToLocation(coords);
@@ -98,7 +102,7 @@ export const HomeScreen = () => {
   );
   
   useEffect(() => {
-    settingUserLocation();
+    settingUserLocation(region);
     return () => {
       if (watchIdRef.current !== null) {
         locationService.clearWatch(watchIdRef.current);
@@ -225,7 +229,8 @@ export const HomeScreen = () => {
         followsUserLocation
         initialRegion={currentLocation || undefined}
         region={region}
-        onMapReady={()=>setMapReady(true)}
+        onMapReady={()=>settingUserLocation(region)}
+        onRegionChangeComplete={(region, details) => settingUserLocation(region)} 
       >
         {currentLocation && (
           <Marker

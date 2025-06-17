@@ -45,9 +45,8 @@ export const locationService = {
           reject(error);
         },
         {
-          enableHighAccuracy: false,
-          timeout: 5000,
-          maximumAge: 10000
+         enableHighAccuracy: false,
+        timeout: 10000,
         }
       );
     });
